@@ -11,20 +11,13 @@ const Home = () => {
       .get(`${backendURL}/api/vehicles`)
       .then((res) => setVehicles(res.data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [backendURL]);
 
   return (
     <div className="container mx-auto p-4 bg-grey-500">
       <h1 className="text-2xl font-bold mb-4 text-center">
         Available Vehicles
       </h1>
-      <div className="flex justify-center mb-8">
-        <img
-          src="src\images\images.jpg"
-          alt="Rotating Car"
-          className="w-84 h-74 animate-spin-slow"
-        />
-      </div>
 
       <div className="grid grid-cols-3 gap-4">
         {vehicles.map((vehicle) => (
