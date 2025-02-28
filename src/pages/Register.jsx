@@ -11,10 +11,12 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
-        "https://your-backend-url.com/api/authentication/register",
-        { name, email, password }
-      );
+      const backendURL = import.meta.env.VITE_BACKEND_URL;
+      await axios.post(`${backendURL}/api/authentication/register`, {
+        name,
+        email,
+        password,
+      });
       navigate("/login");
     } catch (error) {
       console.error("Registration error", error);
