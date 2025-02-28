@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+const backendURL = import.meta.env.VITE_BACKEND_URL;
 const VehicleDetails = () => {
   const { id } = useParams();
   const [vehicle, setVehicle] = useState(null);
 
   useEffect(() => {
     axios
-      .get(`https://your-backend-url.com/api/vehicles/${id}`)
+      .get(`${backendURL}/api/vehicles/${id}`, {
+        headers: { "Content-Type": "application/json" },
+      })
       .then((res) => setVehicle(res.data))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Error fetching vehicle details:", err));
   }, [id]);
 
   if (!vehicle) return <p>Loading...</p>;
