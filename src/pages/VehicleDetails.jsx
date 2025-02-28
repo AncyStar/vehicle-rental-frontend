@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 
-const backendURL = import.meta.env.VITE_BACKEND_URL;
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const VehicleDetails = () => {
   const { id } = useParams();
   const [vehicle, setVehicle] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     axios
-      .get(`${backendURL}/api/vehicles/${id}`, {
-        headers: { "Content-Type": "application/json" },
-      })
+      .get(`${backendUrl}/api/vehicles/${id}`)
       .then((res) => setVehicle(res.data))
-      .catch((err) => console.error("Error fetching vehicle details:", err));
+      .catch((err) => {
+        console.error("Error fetching vehicle details:", err);
+        setError("Vehicle not found");
+      });
   }, [id]);
 
+  if (error) return <p className="text-red-500">{error}</p>;
   if (!vehicle) return <p>Loading...</p>;
 
   return (
@@ -31,6 +35,12 @@ const VehicleDetails = () => {
       <p>Year: {vehicle.year}</p>
       <p>Price: ${vehicle.pricePerDay}/day</p>
       <p>{vehicle.description}</p>
+      <Link
+        to={`/booking/${vehicle._id}`}
+        className="bg-blue-500 text-white p-2 rounded mt-4 inline-block"
+      >
+        Book Now
+      </Link>
     </div>
   );
 };
