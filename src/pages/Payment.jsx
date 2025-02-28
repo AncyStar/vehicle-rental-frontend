@@ -6,34 +6,47 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Payment = () => {
   const { bookingId } = useParams();
-
   const [amount, setAmount] = useState(0);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     axios
       .get(`${backendUrl}/api/bookings/${bookingId}`)
-      .then((res) => setAmount(res.data.totalPrice))
-      .catch((err) => console.error("Error fetching booking details:", err));
+      .then((res) => {
+        if (res.data && res.data.totalPrice) {
+          setAmount(res.data.totalPrice);
+        } else {
+          throw new Error("Invalid booking data received");
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching booking details:", err);
+        setError("Booking not found.");
+      });
   }, [bookingId]);
 
   const handlePayment = async () => {
     try {
       const { data } = await axios.post(
         `${backendUrl}/api/payments/stripe`,
-        {
-          bookingId,
-        },
+        { bookingId },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
 
-      window.location.href = data.paymentUrl;
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      } else {
+        throw new Error("Payment URL not received");
+      }
     } catch (error) {
       console.error("Error processing payment:", error);
-      alert("Payment failed. Please try again.");
+      setError("Payment failed. Please try again.");
     }
   };
+
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="container mx-auto p-4">
