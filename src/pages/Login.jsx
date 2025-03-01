@@ -5,26 +5,39 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validate input before sending request
+    if (!email || !password) {
+      setError("Email and password are required");
+      return;
+    }
+
     try {
       const backendURL = import.meta.env.VITE_BACKEND_URL;
       const { data } = await axios.post(
-        ` ${backendURL}/api/authentication/login`,
-        { email, password }
+        `${backendURL}/api/authentication/login`,
+        { email, password },
+        { headers: { "Content-Type": "application/json" } }
       );
       localStorage.setItem("token", data.token);
       navigate("/");
     } catch (error) {
-      console.error("Login error", error);
+      console.error("Login error", error.response?.data || error.message);
+      setError(
+        error.response?.data?.message || "Login failed. Please try again."
+      );
     }
   };
 
   return (
     <div className="container mx-auto p-4 max-w-md">
       <h2 className="text-2xl font-bold">Login</h2>
+      {/*Display error message */}
+      {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="email"
