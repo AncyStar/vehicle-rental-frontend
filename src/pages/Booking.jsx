@@ -28,6 +28,12 @@ const Booking = () => {
       return;
     }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You must log in first.");
+      return;
+    }
+
     try {
       const { data } = await axios.post(
         `${backendUrl}/api/bookings`,
@@ -37,14 +43,22 @@ const Booking = () => {
           endDate,
         },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: {
+            Authorization: `Bearer ${token}`, // Ensure correct format
+            "Content-Type": "application/json",
+          },
         }
       );
 
       navigate(`/payment/${data.booking._id}`);
     } catch (error) {
-      console.error("Error booking vehicle:", error);
-      setError("Booking failed. Please try again.");
+      console.error(
+        "Error booking vehicle:",
+        error.response?.data || error.message
+      );
+      setError(
+        error.response?.data?.message || "Booking failed. Please try again."
+      );
     }
   };
 
