@@ -10,6 +10,10 @@ const Payment = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!bookingId) {
+      setError("Invalid Booking ID.");
+      return;
+    }
     axios
       .get(`${backendUrl}/api/bookings/${bookingId}`)
       .then((res) => {
