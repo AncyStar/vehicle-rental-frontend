@@ -10,8 +10,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Trim input values to prevent issues
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
     // Validate input before sending request
-    if (!email || !password) {
+    if (!trimmedEmail || !trimmedPassword) {
       setError("Email and password are required");
       return;
     }
@@ -20,15 +25,23 @@ const Login = () => {
       const backendURL = import.meta.env.VITE_BACKEND_URL;
       const { data } = await axios.post(
         `${backendURL}/api/authentication/login`,
-        { email, password },
+        { email: trimmedEmail, password: trimmedPassword },
         { headers: { "Content-Type": "application/json" } }
       );
-      localStorage.setItem("token", data.token);
-      navigate("/");
+
+      // Ensure token exists before storing
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        console.log("Stored Token:", localStorage.getItem("token"));
+        navigate("/");
+      } else {
+        setError("Login successful, but token is missing.");
+      }
     } catch (error) {
       console.error("Login error", error.response?.data || error.message);
       setError(
-        error.response?.data?.message || "Login failed. Please try again."
+        error.response?.data?.message ||
+          "An unexpected error occurred. Please try again later."
       );
     }
   };
@@ -36,8 +49,10 @@ const Login = () => {
   return (
     <div className="container mx-auto p-4 max-w-md">
       <h2 className="text-2xl font-bold">Login</h2>
-      {/*Display error message */}
+
+      {/* Display error message */}
       {error && <p className="text-red-500">{error}</p>}
+
       <form onSubmit={handleSubmit}>
         <input
           type="email"
