@@ -28,7 +28,20 @@ const Booking = () => {
       return;
     }
 
+    // Validate Dates
+    const today = new Date().toISOString().split("T")[0];
+    if (startDate < today || endDate < today) {
+      setError("Dates cannot be in the past.");
+      return;
+    }
+    if (new Date(startDate) > new Date(endDate)) {
+      setError("End date must be after the start date.");
+      return;
+    }
+
+    // Check if user is logged in
     const token = localStorage.getItem("token");
+    console.log("Token Sent:", token); // Debugging
     if (!token) {
       setError("You must log in first.");
       return;
@@ -39,12 +52,12 @@ const Booking = () => {
         `${backendUrl}/api/bookings`,
         {
           vehicleId: id,
-          startDate,
-          endDate,
+          startDate: new Date(startDate), // Ensure date format
+          endDate: new Date(endDate),
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Ensure correct format
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
@@ -62,7 +75,6 @@ const Booking = () => {
     }
   };
 
-  if (error) return <p className="text-red-500">{error}</p>;
   if (!vehicle) return <p>Loading...</p>;
 
   return (
@@ -71,6 +83,7 @@ const Booking = () => {
         Book {vehicle.make} {vehicle.model}
       </h1>
       <p>Price per day: ${vehicle.pricePerDay}</p>
+
       <label className="block mt-4">Start Date:</label>
       <input
         type="date"
@@ -79,6 +92,7 @@ const Booking = () => {
         className="border p-2 w-full"
         required
       />
+
       <label className="block mt-4">End Date:</label>
       <input
         type="date"
@@ -87,12 +101,16 @@ const Booking = () => {
         className="border p-2 w-full"
         required
       />
+
       <button
         onClick={handleBooking}
         className="bg-blue-500 text-white p-2 rounded mt-4"
       >
         Book Now
       </button>
+
+      {/* Display error message BELOW the form instead of replacing everything */}
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
   );
 };
