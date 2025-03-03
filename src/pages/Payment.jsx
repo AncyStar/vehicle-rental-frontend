@@ -10,12 +10,23 @@ const Payment = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log("Token Sent:", token); // Debugging
+
     if (!bookingId) {
       setError("Invalid Booking ID.");
       return;
     }
+
+    if (!token) {
+      setError("You must log in first.");
+      return;
+    }
+
     axios
-      .get(`${backendUrl}/api/bookings/${bookingId}`)
+      .get(`${backendUrl}/api/bookings/${bookingId}`, {
+        headers: { Authorization: `Bearer ${token}` }, //Fix: Send token
+      })
       .then((res) => {
         if (res.data && res.data.totalPrice) {
           setAmount(res.data.totalPrice);
@@ -24,8 +35,11 @@ const Payment = () => {
         }
       })
       .catch((err) => {
-        console.error("Error fetching booking details:", err);
-        setError("Booking not found.");
+        console.error(
+          "Error fetching booking details:",
+          err.response?.data || err.message
+        );
+        setError(err.response?.data?.message || "Booking not found.");
       });
   }, [bookingId]);
 

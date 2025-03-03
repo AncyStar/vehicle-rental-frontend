@@ -49,13 +49,12 @@ const Booking = () => {
       setError("You must log in first.");
       return;
     }
-
     try {
       const { data } = await axios.post(
         `${backendUrl}/api/bookings`,
         {
           vehicleId: id,
-          startDate: selectedStartDate.toISOString(), // Convert to ISO string
+          startDate: selectedStartDate.toISOString(),
           endDate: selectedEndDate.toISOString(),
         },
         {
@@ -66,6 +65,8 @@ const Booking = () => {
         }
       );
 
+      console.log("Booking Created:", data); // Debugging
+      localStorage.setItem("bookingId", data.booking._id); // ✅ Store booking ID
       navigate(`/payment/${data.booking._id}`);
     } catch (error) {
       console.error(
