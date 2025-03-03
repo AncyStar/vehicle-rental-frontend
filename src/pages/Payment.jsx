@@ -5,9 +5,14 @@ import axios from "axios";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Payment = () => {
-  const { bookingId } = useParams();
+  let { bookingId } = useParams();
   const [amount, setAmount] = useState(0);
   const [error, setError] = useState("");
+
+  // Retrieve booking ID from localStorage if missing
+  if (!bookingId) {
+    bookingId = localStorage.getItem("bookingId");
+  }
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,7 +30,7 @@ const Payment = () => {
 
     axios
       .get(`${backendUrl}/api/bookings/${bookingId}`, {
-        headers: { Authorization: `Bearer ${token}` }, //Fix: Send token
+        headers: { Authorization: `Bearer ${token}` }, // ✅ Ensure token is sent
       })
       .then((res) => {
         if (res.data && res.data.totalPrice) {
@@ -44,12 +49,18 @@ const Payment = () => {
   }, [bookingId]);
 
   const handlePayment = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You must log in first.");
+      return;
+    }
+
     try {
       const { data } = await axios.post(
         `${backendUrl}/api/payments/stripe`,
         { bookingId },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${token}` }, // ✅ Ensure token is sent
         }
       );
 
@@ -59,8 +70,13 @@ const Payment = () => {
         throw new Error("Payment URL not received");
       }
     } catch (error) {
-      console.error("Error processing payment:", error);
-      setError("Payment failed. Please try again.");
+      console.error(
+        "Error processing payment:",
+        error.response?.data || error.message
+      );
+      setError(
+        error.response?.data?.message || "Payment failed. Please try again."
+      );
     }
   };
 
