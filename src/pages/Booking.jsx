@@ -28,13 +28,16 @@ const Booking = () => {
       return;
     }
 
-    // Validate Dates
-    const today = new Date().toISOString().split("T")[0];
-    if (startDate < today || endDate < today) {
+    // Validate Dates Correctly
+    const today = new Date();
+    const selectedStartDate = new Date(startDate);
+    const selectedEndDate = new Date(endDate);
+
+    if (selectedStartDate < today || selectedEndDate < today) {
       setError("Dates cannot be in the past.");
       return;
     }
-    if (new Date(startDate) > new Date(endDate)) {
+    if (selectedStartDate >= selectedEndDate) {
       setError("End date must be after the start date.");
       return;
     }
@@ -52,8 +55,8 @@ const Booking = () => {
         `${backendUrl}/api/bookings`,
         {
           vehicleId: id,
-          startDate: new Date(startDate), // Ensure date format
-          endDate: new Date(endDate),
+          startDate: selectedStartDate.toISOString(), // Convert to ISO string
+          endDate: selectedEndDate.toISOString(),
         },
         {
           headers: {
@@ -109,7 +112,6 @@ const Booking = () => {
         Book Now
       </button>
 
-      {/* Display error message BELOW the form instead of replacing everything */}
       {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
   );
