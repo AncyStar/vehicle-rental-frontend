@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import VehicleDetails from "./pages/VehicleDetails";
 import Booking from "./pages/Booking";
 import Payment from "./pages/Payment";
+import AddVehicle from "./components/AddVehicle";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/vehicle/:id" element={<VehicleDetails />} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/payment/:bookingId" element={<Payment />} />
+          <Route path="/admin/add-vehicle" element={<AddVehicle />} />
         </Routes>
       </Router>
     </>
