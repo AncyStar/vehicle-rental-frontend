@@ -18,13 +18,13 @@ const Booking = () => {
     const token = localStorage.getItem("token");
     axios
       .get(`${backendUrl}/api/bookings/availability/${vehicleId}`, {
-        headers: { Authorization: `Bearer ${token}` }, // ✅ Ensure token is used
+        headers: { Authorization: `Bearer ${token}` }, // Ensure token is included
       })
       .then((res) => {
         if (res.data?.unavailableDates) {
           setUnavailableDates(res.data.unavailableDates);
         } else {
-          console.warn("No unavailable dates received");
+          console.warn("No unavailable dates received.");
         }
       })
       .catch((err) => {
