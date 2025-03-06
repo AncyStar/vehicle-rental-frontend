@@ -10,6 +10,7 @@ const Booking = () => {
   const [vehicle, setVehicle] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [unavailableDates, setUnavailableDates] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -17,12 +18,31 @@ const Booking = () => {
       .get(`${backendUrl}/api/vehicles/${id}`)
       .then((res) => setVehicle(res.data))
       .catch(() => setError("Vehicle not found"));
+
+    axios
+      .get(`${backendUrl}/api/bookings/availability/${id}`)
+      .then((res) => setUnavailableDates(res.data.unavailableDates))
+      .catch(() => console.error("Error fetching unavailable dates"));
   }, [id]);
 
   const handleBooking = async () => {
     if (!startDate || !endDate) {
       setError("Please select both start and end dates.");
       return;
+    }
+
+    // Check if selected dates conflict with unavailable dates
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    for (let date of unavailableDates) {
+      const bookedStart = new Date(date.start);
+      const bookedEnd = new Date(date.end);
+      if (start < bookedEnd && end > bookedStart) {
+        setError(
+          "Selected dates are not available. Please choose another range."
+        );
+        return;
+      }
     }
 
     const token = localStorage.getItem("token");
@@ -38,39 +58,42 @@ const Booking = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Check if booking ID exists before storing it
-      if (!data.booking || !data.booking._id) {
-        setError("Booking failed: Invalid response from server.");
-        return;
-      }
-
-      localStorage.setItem("bookingId", data.booking._id);
-
       console.log("Booking Created:", data);
-      navigate(`/payment/${data.booking._id}`); //Redirect after successful booking
-    } catch {
-      setError("Booking failed. Please try again.");
+      navigate(`/payment/${data.booking._id}`);
+    } catch (error) {
+      console.error("Booking failed:", error.response?.data || error.message);
+      setError(
+        error.response?.data?.message || "Booking failed. Please try again."
+      );
     }
   };
-
-  if (!vehicle) return <p>Loading...</p>;
 
   return (
     <div>
       <h1>
-        Book {vehicle.make} {vehicle.model}
+        Book {vehicle?.make} {vehicle?.model}
       </h1>
+      <p>
+        <strong>Unavailable Dates:</strong>{" "}
+        {unavailableDates.map((d) => `${d.start} - ${d.end}`).join(", ")}
+      </p>
+
+      <label>Start Date:</label>
       <input
         type="date"
         value={startDate}
         onChange={(e) => setStartDate(e.target.value)}
       />
+
+      <label>End Date:</label>
       <input
         type="date"
         value={endDate}
         onChange={(e) => setEndDate(e.target.value)}
       />
+
       <button onClick={handleBooking}>Book Now</button>
+
       {error && <p>{error}</p>}
     </div>
   );
