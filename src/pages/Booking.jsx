@@ -5,7 +5,7 @@ import axios from "axios";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Booking = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Vehicle ID from URL
   const navigate = useNavigate();
   const [vehicle, setVehicle] = useState(null);
   const [startDate, setStartDate] = useState("");
@@ -13,6 +13,7 @@ const Booking = () => {
   const [unavailableDates, setUnavailableDates] = useState([]);
   const [error, setError] = useState("");
 
+  // Fetch Vehicle Details & Unavailable Dates
   useEffect(() => {
     axios
       .get(`${backendUrl}/api/vehicles/${id}`)
@@ -22,27 +23,16 @@ const Booking = () => {
     axios
       .get(`${backendUrl}/api/bookings/availability/${id}`)
       .then((res) => setUnavailableDates(res.data.unavailableDates))
-      .catch(() => console.error("Error fetching unavailable dates"));
+      .catch(() => console.log("Error fetching unavailable dates"));
   }, [id]);
 
+  //  Handle Booking Submission
   const handleBooking = async () => {
+    setError(""); // Clear previous errors
+
     if (!startDate || !endDate) {
       setError("Please select both start and end dates.");
       return;
-    }
-
-    // Check if selected dates conflict with unavailable dates
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    for (let date of unavailableDates) {
-      const bookedStart = new Date(date.start);
-      const bookedEnd = new Date(date.end);
-      if (start < bookedEnd && end > bookedStart) {
-        setError(
-          "Selected dates are not available. Please choose another range."
-        );
-        return;
-      }
     }
 
     const token = localStorage.getItem("token");
@@ -52,14 +42,27 @@ const Booking = () => {
     }
 
     try {
-      const { data } = await axios.post(
+      const response = await axios.post(
         `${backendUrl}/api/bookings`,
-        { vehicleId: id, startDate, endDate },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          vehicleId: id,
+          startDate,
+          endDate,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      console.log("Booking Created:", data);
-      navigate(`/payment/${data.booking._id}`);
+      const bookingId = response.data.bookingId || response.data.booking?._id;
+
+      if (!bookingId) {
+        throw new Error("Invalid booking data received");
+      }
+
+      localStorage.setItem("bookingId", bookingId);
+      console.log("Booking ID Stored:", bookingId);
+      navigate(`/payment/${bookingId}`);
     } catch (error) {
       console.error("Booking failed:", error.response?.data || error.message);
       setError(
@@ -68,33 +71,57 @@ const Booking = () => {
     }
   };
 
-  return (
-    <div>
-      <h1>
-        Book {vehicle?.make} {vehicle?.model}
-      </h1>
-      <p>
-        <strong>Unavailable Dates:</strong>{" "}
-        {unavailableDates.map((d) => `${d.start} - ${d.end}`).join(", ")}
-      </p>
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (!vehicle) return <p>Loading...</p>;
 
-      <label>Start Date:</label>
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold">
+        Book {vehicle.make} {vehicle.model}
+      </h1>
+      <p>Price per day: ${vehicle.pricePerDay}</p>
+
+      {/* Show Unavailable Dates */}
+      <h3 className="text-lg font-semibold mt-4">Unavailable Dates:</h3>
+      <ul>
+        {unavailableDates.length > 0 ? (
+          unavailableDates.map((date, index) => (
+            <li key={index} className="text-red-500">
+              {new Date(date.start).toLocaleDateString()} -{" "}
+              {new Date(date.end).toLocaleDateString()}
+            </li>
+          ))
+        ) : (
+          <p>No unavailable dates</p>
+        )}
+      </ul>
+
+      <label className="block mt-4">Start Date:</label>
       <input
         type="date"
         value={startDate}
         onChange={(e) => setStartDate(e.target.value)}
+        className="border p-2 w-full"
+        required
       />
 
-      <label>End Date:</label>
+      <label className="block mt-4">End Date:</label>
       <input
         type="date"
         value={endDate}
         onChange={(e) => setEndDate(e.target.value)}
+        className="border p-2 w-full"
+        required
       />
 
-      <button onClick={handleBooking}>Book Now</button>
+      <button
+        onClick={handleBooking}
+        className="bg-blue-500 text-white p-2 rounded mt-4"
+      >
+        Book Now
+      </button>
 
-      {error && <p>{error}</p>}
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
   );
 };
