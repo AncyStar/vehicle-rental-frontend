@@ -38,6 +38,14 @@ const Booking = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      // Check if booking ID exists before storing it
+      if (!data.booking || !data.booking._id) {
+        setError("Booking failed: Invalid response from server.");
+        return;
+      }
+
+      localStorage.setItem("bookingId", data.booking._id);
+
       console.log("Booking Created:", data);
       navigate(`/payment/${data.booking._id}`); //Redirect after successful booking
     } catch {

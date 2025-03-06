@@ -16,7 +16,6 @@ const Payment = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("Token Sent:", token); // Debugging
 
     if (!bookingId) {
       setError("Invalid Booking ID.");
