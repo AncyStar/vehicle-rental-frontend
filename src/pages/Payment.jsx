@@ -9,34 +9,31 @@ const Payment = () => {
   const [amount, setAmount] = useState(0);
   const [error, setError] = useState("");
 
-  // Retrieve booking ID from localStorage if missing
-  if (!bookingId) {
-    bookingId = localStorage.getItem("bookingId");
-  }
-
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You must log in first.");
+      return;
+    }
+
+    // Retrieve booking ID correctly
+    const storedBookingId = localStorage.getItem("bookingId");
+    bookingId = bookingId || storedBookingId;
 
     if (!bookingId) {
       setError("Invalid Booking ID.");
       return;
     }
 
-    if (!token) {
-      setError("You must log in first.");
-      return;
-    }
+    console.log("Booking ID:", bookingId); // Debugging
 
     axios
       .get(`${backendUrl}/api/bookings/${bookingId}`, {
-        headers: { Authorization: `Bearer ${token}` }, // ✅ Ensure token is sent
+        headers: { Authorization: `Bearer ${token}` }, // Add authentication
       })
       .then((res) => {
-        if (res.data && res.data.totalPrice) {
-          setAmount(res.data.totalPrice);
-        } else {
-          throw new Error("Invalid booking data received");
-        }
+        console.log("Booking Data:", res.data);
+        setAmount(res.data.totalPrice);
       })
       .catch((err) => {
         console.error(
@@ -59,14 +56,14 @@ const Payment = () => {
         `${backendUrl}/api/payments/stripe`,
         { bookingId },
         {
-          headers: { Authorization: `Bearer ${token}` }, // ✅ Ensure token is sent
+          headers: { Authorization: `Bearer ${token}` }, // Ensure token is sent
         }
       );
 
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       } else {
-        throw new Error("Payment URL not received");
+        throw new Error("Payment initiation failed. Please try again later.");
       }
     } catch (error) {
       console.error(
