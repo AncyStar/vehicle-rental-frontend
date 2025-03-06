@@ -8,17 +8,16 @@ const Payment = () => {
   let { bookingId } = useParams();
   const [amount, setAmount] = useState(0);
   const [error, setError] = useState("");
-
+  // Ensure `bookingId` exists
+  if (!bookingId) {
+    bookingId = localStorage.getItem("bookingId");
+  }
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("You must log in first.");
       return;
     }
-
-    // Retrieve booking ID correctly
-    const storedBookingId = localStorage.getItem("bookingId");
-    bookingId = bookingId || storedBookingId;
 
     if (!bookingId) {
       setError("Invalid Booking ID.");
@@ -36,11 +35,8 @@ const Payment = () => {
         setAmount(res.data.totalPrice);
       })
       .catch((err) => {
-        console.error(
-          "Error fetching booking details:",
-          err.response?.data || err.message
-        );
-        setError(err.response?.data?.message || "Booking not found.");
+        console.error("Error fetching booking details:", err);
+        setError("Booking not found.");
       });
   }, [bookingId]);
 
@@ -59,6 +55,7 @@ const Payment = () => {
           headers: { Authorization: `Bearer ${token}` }, // Ensure token is sent
         }
       );
+      console.log("Payment Response:", data);
 
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
@@ -66,13 +63,8 @@ const Payment = () => {
         throw new Error("Payment initiation failed. Please try again later.");
       }
     } catch (error) {
-      console.error(
-        "Error processing payment:",
-        error.response?.data || error.message
-      );
-      setError(
-        error.response?.data?.message || "Payment failed. Please try again."
-      );
+      console.error("Error processing payment:", error);
+      setError("Payment failed. Please try again.");
     }
   };
 
