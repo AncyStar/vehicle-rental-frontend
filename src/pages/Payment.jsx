@@ -8,35 +8,41 @@ const Payment = () => {
   let { bookingId } = useParams();
   const [amount, setAmount] = useState(0);
   const [error, setError] = useState("");
-  // Ensure `bookingId` exists
+
+  // Retrieve booking ID from localStorage if missing
   if (!bookingId) {
     bookingId = localStorage.getItem("bookingId");
   }
+
+  console.log("Booking ID:", bookingId); // Debugging
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      setError("You must log in first.");
-      return;
-    }
 
     if (!bookingId) {
       setError("Invalid Booking ID.");
       return;
     }
 
-    console.log("Booking ID:", bookingId); // Debugging
+    if (!token) {
+      setError("You must log in first.");
+      return;
+    }
 
     axios
       .get(`${backendUrl}/api/bookings/${bookingId}`, {
-        headers: { Authorization: `Bearer ${token}` }, // Add authentication
+        headers: { Authorization: `Bearer ${token}` }, // ✅ Fix: Ensure token is sent
       })
       .then((res) => {
         console.log("Booking Data:", res.data);
         setAmount(res.data.totalPrice);
       })
       .catch((err) => {
-        console.error("Error fetching booking details:", err);
-        setError("Booking not found.");
+        console.error(
+          "Error fetching booking details:",
+          err.response?.data || err.message
+        );
+        setError("You are not authorized to view this booking.");
       });
   }, [bookingId]);
 
@@ -52,19 +58,23 @@ const Payment = () => {
         `${backendUrl}/api/payments/stripe`,
         { bookingId },
         {
-          headers: { Authorization: `Bearer ${token}` }, // Ensure token is sent
+          headers: { Authorization: `Bearer ${token}` }, // ✅ Fix: Ensure token is sent
         }
       );
-      console.log("Payment Response:", data);
 
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       } else {
-        throw new Error("Payment initiation failed. Please try again later.");
+        throw new Error("Payment URL not received");
       }
     } catch (error) {
-      console.error("Error processing payment:", error);
-      setError("Payment failed. Please try again.");
+      console.error(
+        "Error processing payment:",
+        error.response?.data || error.message
+      );
+      setError(
+        error.response?.data?.message || "Payment failed. Please try again."
+      );
     }
   };
 
