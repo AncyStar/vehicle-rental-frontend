@@ -15,10 +15,21 @@ const Booking = () => {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
+    if (!vehicleId) {
+      console.error("Vehicle ID is missing!");
+      setError("Invalid vehicle. Please try again.");
+      return;
+    }
+
     const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You must log in first.");
+      return;
+    }
+
     axios
       .get(`${backendUrl}/api/bookings/availability/${vehicleId}`, {
-        headers: { Authorization: `Bearer ${token}` }, // Ensure token is included
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
         if (res.data?.unavailableDates) {
@@ -43,6 +54,16 @@ const Booking = () => {
       return;
     }
 
+    if (!vehicleId) {
+      setError("Vehicle ID is missing. Please select a vehicle again.");
+      return;
+    }
+
+    if (!startDate || !endDate) {
+      setError("Please select both start and end dates.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setSuccess("");
@@ -55,9 +76,9 @@ const Booking = () => {
       );
 
       console.log("Booking Response:", data);
-      localStorage.setItem("bookingId", data.bookingId); // ✅ Store booking ID for payments
+      localStorage.setItem("bookingId", data.bookingId);
       setSuccess("Booking Successful!");
-      setTimeout(() => navigate(`/payment/${data.bookingId}`), 1500); // ✅ Redirect to payment page
+      setTimeout(() => navigate(`/payment/${data.bookingId}`), 1500);
     } catch (error) {
       console.error("Booking failed:", error.response?.data || error.message);
       setError(
