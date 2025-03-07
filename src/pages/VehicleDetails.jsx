@@ -5,19 +5,32 @@ import axios from "axios";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const VehicleDetails = () => {
-  const { id } = useParams();
+  const { id: vehicleId } = useParams(); // Ensure it's named vehicleId
   const [vehicle, setVehicle] = useState(null);
+  const [availableDates, setAvailableDates] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!vehicleId) {
+      setError("Vehicle ID is missing. Please select a vehicle again.");
+      return;
+    }
+
+    // Fetch vehicle details
     axios
-      .get(`${backendUrl}/api/vehicles/${id}`)
+      .get(`${backendUrl}/api/vehicles/${vehicleId}`)
       .then((res) => setVehicle(res.data))
       .catch((err) => {
         console.error("Error fetching vehicle details:", err);
         setError("Vehicle not found");
       });
-  }, [id]);
+
+    // Fetch available dates
+    axios
+      .get(`${backendUrl}/api/vehicles/availability/${vehicleId}`)
+      .then((res) => setAvailableDates(res.data.unavailableDates))
+      .catch((err) => console.error("Error fetching availability:", err));
+  }, [vehicleId]);
 
   if (error) return <p className="text-red-500">{error}</p>;
   if (!vehicle) return <p>Loading...</p>;
@@ -28,13 +41,30 @@ const VehicleDetails = () => {
         {vehicle.make} {vehicle.model}
       </h1>
       <img
-        src={vehicle.images[0]}
+        src={vehicle.images?.[0] || "/placeholder.jpg"}
         alt={vehicle.model}
         className="w-full h-64 object-cover"
       />
       <p>Year: {vehicle.year}</p>
       <p>Price: ${vehicle.pricePerDay}/day</p>
       <p>{vehicle.description}</p>
+
+      {/* Display unavailable dates */}
+      <h2 className="text-lg font-semibold mt-4">Unavailable Dates:</h2>
+      {availableDates.length === 0 ? (
+        <p className="text-green-500">All dates are available!</p>
+      ) : (
+        <ul className="text-red-500">
+          {availableDates.map((date, index) => (
+            <li key={index}>
+              <strong>Booked:</strong>{" "}
+              {new Date(date.start).toLocaleDateString()} -{" "}
+              {new Date(date.end).toLocaleDateString()}
+            </li>
+          ))}
+        </ul>
+      )}
+
       <Link
         to={`/booking/${vehicle._id}`}
         className="bg-blue-500 text-white p-2 rounded mt-4 inline-block"
