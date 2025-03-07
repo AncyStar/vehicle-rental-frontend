@@ -1,20 +1,27 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = () => {
-      setIsLoggedIn(!!localStorage.getItem("token")); // ✅ Correctly update login state
+      setIsLoggedIn(!!localStorage.getItem("token")); //Dynamically updates login state
     };
 
-    window.addEventListener("storage", checkAuth); // ✅ Listen for changes in localStorage
+    window.addEventListener("storage", checkAuth); // Detect login/logout changes
 
     return () => {
       window.removeEventListener("storage", checkAuth);
     };
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove token
+    setIsLoggedIn(false); // Update state immediately
+    navigate("/login"); // Redirect to login page
+  };
 
   return (
     <nav className="bg-blue-500 p-4 flex justify-between">
@@ -25,12 +32,12 @@ const Navbar = () => {
             <Link to="/vehicles" className="text-white mr-4">
               Vehicles
             </Link>
-            <Link
-              to="/logout"
+            <button
+              onClick={handleLogout}
               className="bg-red-500 text-white px-3 py-1 rounded"
             >
               Logout
-            </Link>
+            </button>
           </>
         ) : (
           <>
