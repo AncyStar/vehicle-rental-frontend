@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -7,45 +7,10 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const Booking = () => {
   const { vehicleId } = useParams();
   const navigate = useNavigate();
-  const [unavailableDates, setUnavailableDates] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
-
-  useEffect(() => {
-    if (!vehicleId) {
-      console.error("Vehicle ID is missing!");
-      setError("Invalid vehicle. Please try again.");
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("You must log in first.");
-      return;
-    }
-
-    axios
-      .get(`${backendUrl}/api/bookings/availability/${vehicleId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        if (res.data?.unavailableDates) {
-          setUnavailableDates(res.data.unavailableDates);
-        } else {
-          console.warn("No unavailable dates received.");
-        }
-      })
-      .catch((err) => {
-        console.error(
-          "Error fetching available dates:",
-          err.response?.data || err.message
-        );
-        setError("Could not fetch unavailable dates. Try again later.");
-      });
-  }, [vehicleId]);
 
   const handleBooking = async () => {
     const token = localStorage.getItem("token");
@@ -54,20 +19,6 @@ const Booking = () => {
       return;
     }
 
-    if (!vehicleId) {
-      setError("Vehicle ID is missing. Please select a vehicle again.");
-      return;
-    }
-
-    if (!startDate || !endDate) {
-      setError("Please select both start and end dates.");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-    setSuccess("");
-
     try {
       const { data } = await axios.post(
         `${backendUrl}/api/bookings`,
@@ -75,36 +26,16 @@ const Booking = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("Booking Response:", data);
-      localStorage.setItem("bookingId", data.bookingId);
       setSuccess("Booking Successful!");
       setTimeout(() => navigate(`/payment/${data.bookingId}`), 1500);
-    } catch (error) {
-      console.error("Booking failed:", error.response?.data || error.message);
-      setError(
-        error.response?.data?.message || "Booking failed. Please try again."
-      );
-    } finally {
-      setLoading(false);
+    } catch {
+      setError("Booking failed. Please try again.");
     }
   };
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold">Book Vehicle</h1>
-
-      <h2 className="mt-4 font-semibold">Unavailable Dates:</h2>
-      {unavailableDates.length > 0 ? (
-        <ul>
-          {unavailableDates.map((date, index) => (
-            <li key={index} className="text-red-500">
-              {date.start.split("T")[0]} to {date.end.split("T")[0]}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-green-500">All dates are available!</p>
-      )}
 
       <div className="mt-4">
         <label className="block">Start Date:</label>
@@ -126,12 +57,9 @@ const Booking = () => {
 
       <button
         onClick={handleBooking}
-        disabled={loading}
-        className={`mt-4 bg-blue-500 text-white p-2 rounded ${
-          loading ? "opacity-50 cursor-not-allowed" : ""
-        }`}
+        className="bg-blue-500 text-white p-2 rounded mt-4"
       >
-        {loading ? "Processing..." : "Book Now"}
+        Book Now
       </button>
 
       {error && <p className="text-red-500 mt-2">{error}</p>}
