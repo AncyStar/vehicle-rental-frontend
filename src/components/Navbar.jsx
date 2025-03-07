@@ -6,10 +6,10 @@ const Navbar = () => {
 
   useEffect(() => {
     const checkAuth = () => {
-      setIsLoggedIn(!!localStorage.getItem("token")); //Dynamically updates login state
+      setIsLoggedIn(!!localStorage.getItem("token")); // ✅ Correctly update login state
     };
 
-    window.addEventListener("storage", checkAuth); //Updates when token changes
+    window.addEventListener("storage", checkAuth); // ✅ Listen for changes in localStorage
 
     return () => {
       window.removeEventListener("storage", checkAuth);
