@@ -5,9 +5,9 @@ import axios from "axios";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Payment = () => {
-  const { bookingId: paramBookingId } = useParams(); // ✅ Get bookingId from URL
-  const storedBookingId = localStorage.getItem("bookingId"); // ✅ Get from localStorage
-  const bookingId = paramBookingId || storedBookingId; // ✅ Use param first, fallback to localStorage
+  const { bookingId: paramBookingId } = useParams();
+  const storedBookingId = localStorage.getItem("bookingId");
+  const bookingId = paramBookingId || storedBookingId; //  Use param first, fallback to localStorage
 
   const [amount, setAmount] = useState(0);
   const [error, setError] = useState("");
@@ -22,12 +22,12 @@ const Payment = () => {
     const token = localStorage.getItem("token");
 
     if (!bookingId) {
-      setError("❌ Invalid Booking ID. Please try again.");
+      setError("Invalid Booking ID. Please try again.");
       return;
     }
 
     if (!token) {
-      setError("❌ You must log in first.");
+      setError("You must log in first.");
       return;
     }
 
@@ -37,12 +37,12 @@ const Payment = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        console.log("✅ Booking Data Fetched:", res.data);
+        console.log("Booking Data Fetched:", res.data);
         setAmount(res.data.totalPrice);
       })
       .catch((err) => {
         console.error(
-          "❌ Error fetching booking details:",
+          "Error fetching booking details:",
           err.response?.data || err.message
         );
         setError(
@@ -54,39 +54,6 @@ const Payment = () => {
       });
   }, [bookingId]);
 
-  const handlePayment = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("❌ You must log in first.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { data } = await axios.post(
-        `${backendUrl}/api/payments/stripe`,
-        { bookingId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (data.paymentUrl) {
-        window.location.href = data.paymentUrl;
-      } else {
-        throw new Error("❌ Payment URL not received");
-      }
-    } catch (error) {
-      console.error(
-        "❌ Error processing payment:",
-        error.response?.data || error.message
-      );
-      setError(
-        error.response?.data?.message || "Payment failed. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (error) return <p className="text-red-500">{error}</p>;
   if (loading) return <p>Loading...</p>;
 
@@ -95,7 +62,7 @@ const Payment = () => {
       <h1 className="text-2xl font-bold">Payment</h1>
       <p>Total Amount: ${amount}</p>
       <button
-        onClick={handlePayment}
+        onClick={() => alert("Proceeding to Payment")}
         disabled={loading}
         className={`bg-green-500 text-white p-2 rounded ${
           loading ? "opacity-50 cursor-not-allowed" : ""

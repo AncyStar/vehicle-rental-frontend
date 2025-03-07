@@ -64,7 +64,7 @@ const Booking = () => {
       return;
     }
 
-    setLoading(true); // ✅ Now defined correctly
+    setLoading(true);
     setError("");
     setSuccess("");
 
@@ -75,17 +75,23 @@ const Booking = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("Booking Response:", data);
-      localStorage.setItem("bookingId", data.bookingId);
+      console.log("✅ Booking Response:", data);
+
+      if (data.booking?._id) {
+        localStorage.setItem("bookingId", data.booking._id); // ✅ Save the booking ID
+        navigate(`/payment/${data.booking._id}`); //Navigate with correct ID
+      } else {
+        throw new Error("Booking ID is missing from response");
+      }
+
       setSuccess("Booking Successful!");
-      setTimeout(() => navigate(`/payment/${data.bookingId}`), 1500);
     } catch (error) {
       console.error("Booking failed:", error.response?.data || error.message);
       setError(
         error.response?.data?.message || "Booking failed. Please try again."
       );
     } finally {
-      setLoading(false); // ✅ Make sure this is defined
+      setLoading(false);
     }
   };
 
