@@ -1,16 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Booking = () => {
-  const { vehicleId } = useParams();
+  const { vehicleId } = useParams(); //Get vehicleId from URL
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    if (!vehicleId) {
+      setError("Vehicle ID is missing. Please select a vehicle again.");
+      return;
+    }
+  }, [vehicleId]);
 
   const handleBooking = async () => {
     const token = localStorage.getItem("token");
@@ -37,6 +44,8 @@ const Booking = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold">Book Vehicle</h1>
 
+      {error && <p className="text-red-500">{error}</p>}
+
       <div className="mt-4">
         <label className="block">Start Date:</label>
         <input
@@ -62,7 +71,6 @@ const Booking = () => {
         Book Now
       </button>
 
-      {error && <p className="text-red-500 mt-2">{error}</p>}
       {success && <p className="text-green-500 mt-2">{success}</p>}
     </div>
   );
