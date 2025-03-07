@@ -1,44 +1,46 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    if (token) {
+      // Decode the token to get user info (optional)
+      setUser({ loggedIn: true });
+    }
   }, []);
 
-  const handleLogout = () => {
+  const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setIsLoggedIn(false);
+    setUser(null);
     navigate("/login");
   };
 
   return (
-    <nav className="bg-gray-800 text-white p-4 flex justify-between">
-      <Link to="/" className="text-xl font-bold">
-        Vehicle Rental
-      </Link>
+    <nav className="bg-blue-500 p-4 flex justify-between">
+      <h1 className="text-white font-bold text-lg">Vehicle Rental</h1>
       <div>
-        {isLoggedIn ? (
+        {user ? (
           <>
-            <span className="mr-4">Logged In</span>
+            <span className="text-white mr-4">Welcome!</span>
             <button
-              onClick={handleLogout}
-              className="bg-red-500 px-3 py-1 rounded"
+              onClick={logout}
+              className="bg-red-500 text-white px-3 py-1 rounded"
             >
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" className="mr-4">
+            <Link to="/login" className="text-white mr-4">
               Login
             </Link>
-            <Link to="/register">Register</Link>
+            <Link to="/register" className="text-white">
+              Register
+            </Link>
           </>
         )}
       </div>
