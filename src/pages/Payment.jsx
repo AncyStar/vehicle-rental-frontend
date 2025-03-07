@@ -5,22 +5,29 @@ import axios from "axios";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Payment = () => {
-  const { bookingId: paramBookingId } = useParams();
-  const bookingId = paramBookingId || localStorage.getItem("bookingId");
+  const { bookingId: paramBookingId } = useParams(); // ✅ Get bookingId from URL
+  const storedBookingId = localStorage.getItem("bookingId"); // ✅ Get from localStorage
+  const bookingId = paramBookingId || storedBookingId; // ✅ Use param first, fallback to localStorage
+
   const [amount, setAmount] = useState(0);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  console.log("🟢 Debugging Payment Page:");
+  console.log("🔹 bookingId from URL:", paramBookingId);
+  console.log("🔹 bookingId from localStorage:", storedBookingId);
+  console.log("🔹 Final bookingId:", bookingId);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (!bookingId) {
-      setError("Invalid Booking ID. Please try again.");
+      setError("❌ Invalid Booking ID. Please try again.");
       return;
     }
 
     if (!token) {
-      setError("You must log in first.");
+      setError("❌ You must log in first.");
       return;
     }
 
@@ -30,12 +37,12 @@ const Payment = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        console.log("Booking Data:", res.data);
+        console.log("✅ Booking Data Fetched:", res.data);
         setAmount(res.data.totalPrice);
       })
       .catch((err) => {
         console.error(
-          "Error fetching booking details:",
+          "❌ Error fetching booking details:",
           err.response?.data || err.message
         );
         setError(
@@ -45,12 +52,12 @@ const Payment = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [bookingId]); //Removed `backendUrl` from dependency array
+  }, [bookingId]);
 
   const handlePayment = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("You must log in first.");
+      setError("❌ You must log in first.");
       return;
     }
 
@@ -65,11 +72,11 @@ const Payment = () => {
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       } else {
-        throw new Error("Payment URL not received");
+        throw new Error("❌ Payment URL not received");
       }
     } catch (error) {
       console.error(
-        "Error processing payment:",
+        "❌ Error processing payment:",
         error.response?.data || error.message
       );
       setError(
