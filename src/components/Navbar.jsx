@@ -2,11 +2,18 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token); //Set login state based on token existence
+    const checkAuth = () => {
+      setIsLoggedIn(!!localStorage.getItem("token")); //Dynamically updates login state
+    };
+
+    window.addEventListener("storage", checkAuth); //Updates when token changes
+
+    return () => {
+      window.removeEventListener("storage", checkAuth);
+    };
   }, []);
 
   return (
