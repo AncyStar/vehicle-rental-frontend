@@ -5,7 +5,7 @@ import axios from "axios";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const VehicleDetails = () => {
-  const { id: vehicleId } = useParams(); // Ensure it's named vehicleId
+  const { vehicleId } = useParams(); // ✅ Get vehicleId correctly
   const [vehicle, setVehicle] = useState(null);
   const [availableDates, setAvailableDates] = useState([]);
   const [error, setError] = useState("");
@@ -20,16 +20,13 @@ const VehicleDetails = () => {
     axios
       .get(`${backendUrl}/api/vehicles/${vehicleId}`)
       .then((res) => setVehicle(res.data))
-      .catch((err) => {
-        console.error("Error fetching vehicle details:", err);
-        setError("Vehicle not found");
-      });
+      .catch(() => setError("Vehicle not found"));
 
     // Fetch available dates
     axios
       .get(`${backendUrl}/api/vehicles/availability/${vehicleId}`)
       .then((res) => setAvailableDates(res.data.unavailableDates))
-      .catch((err) => console.error("Error fetching availability:", err));
+      .catch(() => setError("Error fetching availability."));
   }, [vehicleId]);
 
   if (error) return <p className="text-red-500">{error}</p>;
@@ -66,7 +63,7 @@ const VehicleDetails = () => {
       )}
 
       <Link
-        to={`/booking/${vehicle._id}`}
+        to={`/booking/${vehicleId}`} //Correctly passes vehicleId to Booking page
         className="bg-blue-500 text-white p-2 rounded mt-4 inline-block"
       >
         Book Now
