@@ -11,7 +11,7 @@ const Booking = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ Defined here
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
@@ -69,19 +69,25 @@ const Booking = () => {
     setSuccess("");
 
     try {
+      console.log("Sending booking request:", {
+        vehicleId,
+        startDate,
+        endDate,
+      });
+
       const { data } = await axios.post(
         `${backendUrl}/api/bookings`,
         { vehicleId, startDate, endDate },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("✅ Booking Response:", data);
+      console.log("Booking Response:", data);
 
       if (data.booking?._id) {
-        localStorage.setItem("bookingId", data.booking._id); // ✅ Save the booking ID
-        navigate(`/payment/${data.booking._id}`); //Navigate with correct ID
+        localStorage.setItem("bookingId", data.booking._id);
+        navigate(`/payment/${data.booking._id}`);
       } else {
-        throw new Error("Booking ID is missing from response");
+        throw new Error("Booking ID is missing from response.");
       }
 
       setSuccess("Booking Successful!");
