@@ -64,6 +64,20 @@ const Booking = () => {
       return;
     }
 
+    // Convert dates to Date objects
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (start >= end) {
+      setError("End date must be after start date.");
+      return;
+    }
+
+    // Calculate total price (assuming a fixed rate of $50 per day)
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)); // Difference in days
+    const ratePerDay = 50; // Example rate
+    const totalPrice = days * ratePerDay;
+
     setLoading(true);
     setError("");
     setSuccess("");
@@ -73,11 +87,12 @@ const Booking = () => {
         vehicleId,
         startDate,
         endDate,
+        totalPrice,
       });
 
       const { data } = await axios.post(
         `${backendUrl}/api/bookings`,
-        { vehicleId, startDate, endDate },
+        { vehicleId, startDate, endDate, totalPrice },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
