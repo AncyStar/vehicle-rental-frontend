@@ -73,26 +73,26 @@ const Booking = () => {
       return;
     }
 
-    // Calculate total price (assuming a fixed rate of $50 per day)
+    // Calculate total price (Example: $50 per day)
     const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)); // Difference in days
-    const ratePerDay = 50; // Example rate
+    const ratePerDay = 50; // Example price
     const totalPrice = days * ratePerDay;
+
+    console.log("Sending booking request:", {
+      vehicleId,
+      startDate,
+      endDate,
+      totalPrice, // ✅ Ensure this is included
+    });
 
     setLoading(true);
     setError("");
     setSuccess("");
 
     try {
-      console.log("Sending booking request:", {
-        vehicleId,
-        startDate,
-        endDate,
-        totalPrice,
-      });
-
       const { data } = await axios.post(
         `${backendUrl}/api/bookings`,
-        { vehicleId, startDate, endDate, totalPrice },
+        { vehicleId, startDate, endDate, totalPrice }, // ✅ Make sure totalPrice is sent
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
