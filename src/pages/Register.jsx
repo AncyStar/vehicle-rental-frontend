@@ -33,7 +33,7 @@ const Register = () => {
         <input
           type="text"
           placeholder="Name"
-          className="input"
+          className="w-full p-2 border rounded my-2"
           value={user.name}
           onChange={(e) => setUser({ ...user, name: e.target.value })}
           required
@@ -41,7 +41,7 @@ const Register = () => {
         <input
           type="email"
           placeholder="Email"
-          className="input"
+          className="w-full p-2 border rounded my-2"
           value={user.email}
           onChange={(e) => setUser({ ...user, email: e.target.value })}
           required
@@ -49,12 +49,17 @@ const Register = () => {
         <input
           type="password"
           placeholder="Password"
-          className="input"
+          className="w-full p-2 border rounded my-2"
           value={user.password}
           onChange={(e) => setUser({ ...user, password: e.target.value })}
           required
         />
-        <button className="btn">Register</button>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white w-full py-2 rounded"
+        >
+          Register
+        </button>
       </form>
     </div>
   );
