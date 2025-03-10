@@ -8,10 +8,12 @@ import Booking from "./pages/Booking";
 import Payment from "./pages/Payment";
 import AddVehicle from "./pages/AddVehicle";
 import Logout from "./pages/Logout";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
