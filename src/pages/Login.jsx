@@ -41,20 +41,23 @@ const Login = () => {
         <input
           type="email"
           placeholder="Email"
-          className="input"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-2 border rounded my-2"
           required
         />
         <input
           type="password"
           placeholder="Password"
-          className="input"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-2 border rounded my-2"
           required
         />
-        <button type="submit" className="btn">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white w-full py-2 rounded"
+        >
           Login
         </button>
       </form>
