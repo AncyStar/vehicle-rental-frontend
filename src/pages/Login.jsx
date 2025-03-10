@@ -14,13 +14,10 @@ const Login = () => {
 
     try {
       const backendURL = import.meta.env.VITE_BACKEND_URL;
-      const { data } = await axios.post(
-        `${backendURL}/api/authentication/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const { data } = await axios.post(`${backendURL}/api/auth/login`, {
+        email,
+        password,
+      });
 
       if (data.token) {
         localStorage.setItem("token", data.token);

@@ -13,7 +13,7 @@ const Register = () => {
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/authentication/register`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
         user
       );
       navigate("/login");
