@@ -14,8 +14,14 @@ const Navbar = () => {
         <Link to="/bookings" className="px-4">
           Bookings
         </Link>
+        <Link to="/register" className="px-4">
+          Register
+        </Link>
         <Link to="/login" className="px-4">
           Login
+        </Link>
+        <Link to="/logout" className="px-4">
+          Logout
         </Link>
       </div>
     </nav>
