@@ -3,60 +3,58 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [user, setUser] = useState({ name: "", email: "", password: "" });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
-      const backendURL = import.meta.env.VITE_BACKEND_URL;
-      await axios.post(`${backendURL}/api/authentication/register`, {
-        name,
-        email,
-        password,
-      });
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
+        user
+      );
       navigate("/login");
-    } catch (error) {
-      console.error("Registration error", error);
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed.");
     }
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-md">
-      <h2 className="text-2xl font-bold">Register</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="flex justify-center items-center h-screen">
+      <form
+        onSubmit={handleRegister}
+        className="p-6 shadow-lg rounded-lg bg-white"
+      >
+        <h2 className="text-2xl font-bold">Register</h2>
+        {error && <p className="text-red-500">{error}</p>}
         <input
           type="text"
           placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full p-2 border rounded my-2"
+          className="input"
+          value={user.name}
+          onChange={(e) => setUser({ ...user, name: e.target.value })}
           required
         />
         <input
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 border rounded my-2"
+          className="input"
+          value={user.email}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
           required
         />
         <input
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border rounded my-2"
+          className="input"
+          value={user.password}
+          onChange={(e) => setUser({ ...user, password: e.target.value })}
           required
         />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white w-full py-2 rounded"
-        >
-          Register
-        </button>
+        <button className="btn">Register</button>
       </form>
     </div>
   );
