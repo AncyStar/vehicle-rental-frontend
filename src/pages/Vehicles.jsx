@@ -8,11 +8,12 @@ const Vehicles = () => {
   useEffect(() => {
     API.get("/vehicles")
       .then((response) => {
-        setVehicles(response.data || []);
+        console.log("Fetched Vehicles:", response.data); // ✅ Log API response
+        setVehicles(response.data || []); // ✅ Prevent undefined errors
       })
       .catch((error) => {
         console.error("Error fetching vehicles:", error);
-        setVehicles([]);
+        setVehicles([]); // ✅ Prevent app crash
       });
   }, []);
 
@@ -20,9 +21,13 @@ const Vehicles = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold">Available Vehicles</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {vehicles.map((vehicle) => (
-          <VehicleCard key={vehicle._id} vehicle={vehicle} />
-        ))}
+        {vehicles.length > 0 ? (
+          vehicles.map((vehicle) => (
+            <VehicleCard key={vehicle._id} vehicle={vehicle} />
+          ))
+        ) : (
+          <p>No vehicles available.</p> // ✅ Handles empty state
+        )}
       </div>
     </div>
   );
