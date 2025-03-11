@@ -15,16 +15,39 @@ const Booking = () => {
       .catch(() => setError("Vehicle not found"));
   }, [id]);
 
-  const handleBookingSubmit = (e) => {
+  const handleBookingSubmit = async (e) => {
     e.preventDefault();
+
     if (!startDate || !endDate) {
       alert("Please select both start and end dates.");
       return;
     }
 
-    API.post("/bookings", { vehicleId: id, startDate, endDate })
-      .then(() => alert("Booking successful!"))
-      .catch(() => alert("Booking failed."));
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const days = (end - start) / (1000 * 60 * 60 * 24); // Convert milliseconds to days
+
+    if (days <= 0) {
+      alert("End date must be after the start date.");
+      return;
+    }
+
+    const totalPrice = days * vehicle.pricePerDay;
+
+    try {
+      const response = await API.post("/bookings/book", {
+        vehicleId: id,
+        startDate,
+        endDate,
+        totalPrice, // ✅ Sending total price in request
+      });
+
+      alert("Booking successful!");
+      console.log("Booking response:", response.data);
+    } catch (error) {
+      alert("Booking failed.");
+      console.error("Error booking:", error);
+    }
   };
 
   if (error) return <p className="text-red-500">{error}</p>;
