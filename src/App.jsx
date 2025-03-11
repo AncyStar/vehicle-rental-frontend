@@ -17,6 +17,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/vehicles" element={<Vehicles />} />
         <Route path="/vehicles/:id" element={<VehicleDetails />} />
+        <Route path="/bookings" element={<BookingDetails />} />
         <Route
           path="/booking/:id"
           element={
@@ -25,7 +26,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/bookings" element={<BookingDetails />} />
 
         {/* ✅ Ensure only logged-in users can book */}
         <Route path="/login" element={<Login />} />
