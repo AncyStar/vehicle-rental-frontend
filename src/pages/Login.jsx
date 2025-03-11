@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../services/api"; // ✅ Import API service
+import axios from "../services/api"; // Import API service
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState(""); // ✅ State for error messages
+  const [error, setError] = useState(""); // State for error messages
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,13 +13,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // ✅ Clear previous errors
+    setError(""); // Clear previous errors
 
     try {
       const response = await axios.post("/auth/login", formData); // ✅ Correct API route
       localStorage.setItem("token", response.data.token);
       alert("Login successful!");
-      navigate("/"); // ✅ Redirect to home
+      navigate("/"); //Redirect to home
     } catch {
       setError("Invalid email or password. Please try again.");
     }
