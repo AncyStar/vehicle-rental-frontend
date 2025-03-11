@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "../services/api";
 import { Link } from "react-router-dom";
+import API from "../services/api";
 
 const Vehicles = () => {
   const [vehicles, setVehicles] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("/vehicles")
+    API.get("/vehicles")
       .then((response) => setVehicles(response.data))
       .catch((error) => console.error("Error fetching vehicles:", error));
   }, []);
