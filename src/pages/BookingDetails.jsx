@@ -7,6 +7,11 @@ const BookingDetails = () => {
 
   useEffect(() => {
     const fetchBookings = async () => {
+      if (!token) {
+        console.error("No token found. User not authenticated.");
+        return; // Prevent API call if no token exists
+      }
+
       try {
         const response = await axios.get(
           "https://vehicle-rental-backend-bksz.onrender.com/api/bookings/my-bookings",
@@ -23,7 +28,7 @@ const BookingDetails = () => {
     };
 
     fetchBookings();
-  }, [token]);
+  }, []); // ✅ No need to include `token` in dependencies
 
   return (
     <div className="p-6">
@@ -35,7 +40,7 @@ const BookingDetails = () => {
           {bookings.map((booking) => (
             <li key={booking._id} className="border p-4 mb-2">
               <p>
-                <strong>Vehicle:</strong> {booking.vehicle.name}
+                <strong>Vehicle:</strong> {booking.vehicle?.name || "Unknown"}
               </p>
               <p>
                 <strong>Start Date:</strong>{" "}
