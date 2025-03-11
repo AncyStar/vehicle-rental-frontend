@@ -25,14 +25,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/bookings"
-          element={
-            <ProtectedRoute>
-              <BookingDetails />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/bookings" element={<BookingDetails />} />
+
         {/* ✅ Ensure only logged-in users can book */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
