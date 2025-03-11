@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import API from "../services/api";
-import VehicleCard from "../components/VehicleCard"; // ✅ Import VehicleCard
 
 const Vehicles = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -8,12 +8,12 @@ const Vehicles = () => {
   useEffect(() => {
     API.get("/vehicles")
       .then((response) => {
-        console.log("Fetched Vehicles:", response.data); // ✅ Debugging log
-        setVehicles(response.data || []); // ✅ Prevents undefined errors
+        console.log("Fetched Vehicles:", response.data);
+        setVehicles(response.data || []);
       })
       .catch((error) => {
         console.error("Error fetching vehicles:", error);
-        setVehicles([]); // ✅ Ensures an empty array if error occurs
+        setVehicles([]);
       });
   }, []);
 
@@ -23,10 +23,10 @@ const Vehicles = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {vehicles.length > 0 ? (
           vehicles.map((vehicle) => (
-            <VehicleCard key={vehicle._id} vehicle={vehicle} /> // ✅ Uses VehicleCard component
+            <VehicleCard key={vehicle._id} vehicle={vehicle} />
           ))
         ) : (
-          <p>No vehicles available.</p> // ✅ Handles empty state
+          <p>No vehicles available.</p>
         )}
       </div>
     </div>
