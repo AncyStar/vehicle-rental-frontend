@@ -6,10 +6,12 @@ import Booking from "./pages/Booking"; //Import Booking Page
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/vehicles" element={<Vehicles />} />
