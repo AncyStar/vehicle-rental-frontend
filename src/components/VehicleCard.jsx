@@ -16,7 +16,7 @@ const VehicleCard = ({ vehicle }) => {
       <p>Price: ${vehicle.pricePerDay}/day</p>
 
       <Link
-        to={`/vehicle/${vehicle._id}`}
+        to={`/vehicles/${vehicle._id}`}
         className="bg-blue-500 text-white px-4 py-2 mt-2 inline-block rounded"
       >
         View Details
