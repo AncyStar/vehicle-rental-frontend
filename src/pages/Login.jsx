@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../services/api"; // ✅ Import API service
+import axios from "../services/api"; // Import API service
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState(""); // ✅ State for error messages
+  const [error, setError] = useState(""); // State for error messages
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -16,7 +16,7 @@ const Login = () => {
     setError(""); // Clear previous errors
 
     try {
-      const response = await axios.post("/auth/login", formData); // ✅ Use API service
+      const response = await axios.post("/authRoute/login", formData); //Use API service
       localStorage.setItem("token", response.data.token);
       alert("Login successful!");
       navigate("/"); // Redirect to home or dashboard
