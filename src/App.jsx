@@ -7,6 +7,7 @@ import Booking from "./pages/Booking"; //Import Booking Page
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BookingDetails from "./pages/BookingDetails";
 
 function App() {
   return (
@@ -24,9 +25,18 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/bookings"
+          element={
+            <ProtectedRoute>
+              <BookingDetails />
+            </ProtectedRoute>
+          }
+        />
         {/* ✅ Ensure only logged-in users can book */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
