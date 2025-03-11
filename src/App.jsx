@@ -30,7 +30,6 @@ function App() {
         {/* ✅ Ensure only logged-in users can book */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
