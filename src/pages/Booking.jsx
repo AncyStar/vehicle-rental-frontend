@@ -15,7 +15,7 @@ const Booking = () => {
       .catch(() => setError("Vehicle not found"));
   }, [id]);
 
-  const handleBookingSubmit = async (e) => {
+  const handleBookingSubmit = (e) => {
     e.preventDefault();
 
     if (!startDate || !endDate) {
@@ -23,31 +23,25 @@ const Booking = () => {
       return;
     }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const days = (end - start) / (1000 * 60 * 60 * 24); // Convert milliseconds to days
-
+    const days =
+      (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24);
     if (days <= 0) {
-      alert("End date must be after the start date.");
+      alert("End date must be after start date.");
       return;
     }
 
-    const totalPrice = days * vehicle.pricePerDay;
+    const totalPrice = days * (vehicle?.pricePerDay || 0); // Ensure pricePerDay exists
 
-    try {
-      const response = await API.post("/bookings/book", {
-        vehicleId: id,
-        startDate,
-        endDate,
-        totalPrice, // ✅ Sending total price in request
-      });
+    console.log("Booking Data:", {
+      vehicleId: id,
+      startDate,
+      endDate,
+      totalPrice,
+    });
 
-      alert("Booking successful!");
-      console.log("Booking response:", response.data);
-    } catch (error) {
-      alert("Booking failed.");
-      console.error("Error booking:", error);
-    }
+    API.post("/bookings", { vehicleId: id, startDate, endDate, totalPrice })
+      .then(() => alert("Booking successful!"))
+      .catch(() => alert("Booking failed."));
   };
 
   if (error) return <p className="text-red-500">{error}</p>;
