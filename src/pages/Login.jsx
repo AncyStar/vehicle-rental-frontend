@@ -1,59 +1,48 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
     try {
-      const backendURL = import.meta.env.VITE_BACKEND_URL;
-      const { data } = await axios.post(`${backendURL}/api/authRoute/login`, {
-        email,
-        password,
-      });
-
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        navigate("/vehicles");
-      } else {
-        setError("Login failed. Try again.");
-      }
-    } catch (error) {
-      setError(error.response?.data?.message || "Login failed.");
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        formData
+      );
+      localStorage.setItem("token", response.data.token);
+      alert("Login successful!");
+    } catch {
+      alert("Invalid credentials");
     }
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-md">
+    <div className="max-w-md mx-auto mt-10">
       <h2 className="text-2xl font-bold">Login</h2>
-      {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="space-y-4 mt-4">
         <input
           type="email"
+          name="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 border rounded my-2"
-          required
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
         />
         <input
           type="password"
+          name="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border rounded my-2"
-          required
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white w-full py-2 rounded"
+          className="w-full bg-blue-500 text-white p-2 rounded"
         >
           Login
         </button>

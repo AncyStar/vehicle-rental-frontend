@@ -1,49 +1,33 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import axios from "axios";
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "../services/api";
 
 const VehicleDetails = () => {
-  const { vehicleId } = useParams();
+  const { id } = useParams();
   const [vehicle, setVehicle] = useState(null);
-  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!vehicleId) {
-      setError("Vehicle ID is missing. Please select a vehicle.");
-      return;
-    }
-
     axios
-      .get(`${backendUrl}/api/vehicles/${vehicleId}`)
-      .then((res) => setVehicle(res.data))
-      .catch(() => setError("Vehicle not found"));
-  }, [vehicleId]);
+      .get(`/vehicles/${id}`)
+      .then((response) => setVehicle(response.data))
+      .catch((error) => console.error("Error fetching vehicle:", error));
+  }, [id]);
 
-  if (error) return <p className="text-red-500">{error}</p>;
   if (!vehicle) return <p>Loading...</p>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold">
+    <div className="p-6">
+      <h2 className="text-2xl font-bold">
         {vehicle.make} {vehicle.model}
-      </h1>
+      </h2>
       <img
-        src={vehicle.images?.[0] || "/placeholder.jpg"}
+        src={vehicle.imageUrls[0]}
         alt={vehicle.model}
-        className="w-full h-64 object-cover"
+        className="w-full h-60 object-cover rounded"
       />
       <p>Year: {vehicle.year}</p>
-      <p>Price: ${vehicle.pricePerDay}/day</p>
-      <p>{vehicle.description}</p>
-
-      <Link
-        to={`/booking/${vehicleId}`}
-        className="bg-blue-500 text-white p-2 rounded mt-4 inline-block"
-      >
-        Book Now
-      </Link>
+      <p>Price per day: ${vehicle.pricePerDay}</p>
+      <p>Location: {vehicle.location}</p>
     </div>
   );
 };

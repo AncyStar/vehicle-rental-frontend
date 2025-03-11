@@ -1,35 +1,26 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Vehicles from "./pages/Vehicles";
 import VehicleDetails from "./pages/VehicleDetails";
-import Booking from "./pages/Booking";
-import Payment from "./pages/Payment";
-import AddVehicle from "./pages/AddVehicle";
-import Logout from "./pages/Logout";
-import Navbar from "./components/Navbar";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-function App() {
+const App = () => {
   return (
     <Router>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/vehicles" element={<Vehicles />} />
-        <Route path="/vehicle/:vehicleId" element={<VehicleDetails />} />
-        <Route path="/booking/:vehicleId" element={<Booking />} />
-        <Route path="/payment/:bookingId" element={<Payment />} />
-        <Route path="/admin/add-vehicle" element={<AddVehicle />} />
-        <Route path="/logout" element={<Logout />} />
-
-        {/* Catch-All for 404 Pages */}
-        <Route path="*" element={<h1>404 - Page Not Found</h1>} />
+        <Route path="/vehicles/:id" element={<VehicleDetails />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
