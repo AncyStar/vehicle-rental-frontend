@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Vehicles from "./pages/Vehicles";
 import VehicleDetails from "./pages/VehicleDetails"; //
@@ -6,7 +7,6 @@ import Booking from "./pages/Booking"; //Import Booking Page
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Navbar from "./components/Navbar";
 
 function App() {
   return (
