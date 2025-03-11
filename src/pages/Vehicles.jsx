@@ -8,7 +8,6 @@ const Vehicles = () => {
   useEffect(() => {
     API.get("/vehicles")
       .then((response) => {
-        console.log("Fetched Vehicles:", response.data); // ✅ Debugging log
         setVehicles(response.data || []);
       })
       .catch((error) => {
@@ -28,9 +27,6 @@ const Vehicles = () => {
                 src={vehicle.images?.[0] || "/default-car.jpg"} // ✅ Changed from imageUrls to images
                 alt={vehicle.model || "Unknown Model"}
                 className="w-full h-40 object-cover rounded"
-                onError={(e) => {
-                  e.target.src = "/default-car.jpg";
-                }} // ✅ Fallback if image fails
               />
               <h3 className="text-xl font-semibold">
                 {vehicle.make || "Unknown"} {vehicle.model || ""}

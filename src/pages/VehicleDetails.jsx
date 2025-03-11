@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom"; // ✅ Import Link
-import API from "../services/api"; // ✅ Use API instead of axios
+import { useParams, Link } from "react-router-dom";
+import API from "../services/api"; //Use API instead of axios
 
 const VehicleDetails = () => {
-  const { id } = useParams(); // ✅ Use `id` to match route `/vehicles/:id`
+  const { id } = useParams(); //  Use `id` to match route `/vehicles/:id`
   const [vehicle, setVehicle] = useState(null);
   const [availableDates, setAvailableDates] = useState([]);
   const [error, setError] = useState("");
@@ -26,7 +26,7 @@ const VehicleDetails = () => {
   }, [id]);
 
   if (error) return <p className="text-red-500">{error}</p>;
-  if (!vehicle) return <p>Loading...</p>;
+  if (!vehicle) return <p>Loading Vehicle details...</p>;
 
   return (
     <div className="container mx-auto p-4">
