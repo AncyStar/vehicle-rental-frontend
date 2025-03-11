@@ -8,7 +8,7 @@ const Vehicles = () => {
   useEffect(() => {
     API.get("/vehicles")
       .then((response) => {
-        console.log("Fetched Vehicles:", response.data);
+        console.log("Fetched Vehicles:", response.data); // ✅ Debugging log
         setVehicles(response.data || []);
       })
       .catch((error) => {
@@ -23,10 +23,31 @@ const Vehicles = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {vehicles.length > 0 ? (
           vehicles.map((vehicle) => (
-            <VehicleCard key={vehicle._id} vehicle={vehicle} />
+            <div key={vehicle._id} className="border p-4 rounded-lg shadow-lg">
+              <img
+                src={vehicle.images?.[0] || "/default-car.jpg"} // ✅ Changed from imageUrls to images
+                alt={vehicle.model || "Unknown Model"}
+                className="w-full h-40 object-cover rounded"
+                onError={(e) => {
+                  e.target.src = "/default-car.jpg";
+                }} // ✅ Fallback if image fails
+              />
+              <h3 className="text-xl font-semibold">
+                {vehicle.make || "Unknown"} {vehicle.model || ""}
+              </h3>
+              <p>Year: {vehicle.year || "N/A"}</p>
+              <p>Price per day: ${vehicle.pricePerDay || "N/A"}</p>
+              <p>Location: {vehicle.location || "Unknown"}</p>
+              <Link
+                to={`/vehicles/${vehicle._id}`}
+                className="text-blue-500 hover:underline"
+              >
+                View Details
+              </Link>
+            </div>
           ))
         ) : (
-          <p>No vehicles available.</p>
+          <p>No vehicles available.</p> // ✅ Handles empty state
         )}
       </div>
     </div>
