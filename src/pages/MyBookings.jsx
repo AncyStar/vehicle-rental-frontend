@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../services/api"; // Axios instance with auto-token
+import PaymentButton from "../components/PaymentButton"; // Import the Payment Button component
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -19,12 +20,12 @@ const MyBookings = () => {
       }
 
       try {
-        const response = await API.get("/bookings"); // Uses the Axios instance
+        const response = await API.get("/bookings/my"); // Fetch only user's bookings
         console.log("Bookings received:", response.data);
         setBookings(response.data);
       } catch (error) {
         console.error(
-          " Error fetching bookings:",
+          "Error fetching bookings:",
           error.response?.data || error.message
         );
 
@@ -72,6 +73,14 @@ const MyBookings = () => {
               <p>
                 <strong>Status:</strong> {booking.status}
               </p>
+
+              {/* Show Payment Button only if booking is pending */}
+              {booking.status === "pending" && (
+                <PaymentButton
+                  bookingId={booking._id}
+                  amount={booking.totalPrice}
+                />
+              )}
             </li>
           ))}
         </ul>
