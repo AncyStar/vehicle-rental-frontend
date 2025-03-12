@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import API from "../services/api";
 
 const Booking = () => {
-  const { id } = useParams(); // ✅ Get vehicle ID from URL
+  const { id } = useParams(); //Get vehicle ID from URL
   const [vehicle, setVehicle] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");

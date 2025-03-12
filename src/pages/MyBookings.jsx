@@ -1,34 +1,33 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../services/api"; // Import Axios instance
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
-  const token = localStorage.getItem("token"); // Get token from local storage
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); //Added loading state
 
   useEffect(() => {
     const fetchBookings = async () => {
-      if (!token) {
-        console.error("❌ No token found. User not authenticated.");
-        return; // Prevent API call if no token exists
-      }
-
       try {
-        const response = await axios.get(
-          "https://vehicle-rental-backend-bksz.onrender.com/api/bookings/my", // ✅ Fixed API Route
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        console.log("✅ Bookings received:", response.data); // Debug log
-        setBookings(response.data); // Store bookings in state
+        const response = await API.get("/bookings/my"); // Uses the Axios instance
+        console.log(" Bookings received:", response.data);
+        setBookings(response.data);
       } catch (error) {
-        console.error("❌ Error fetching bookings:", error);
+        console.error(
+          "Error fetching bookings:",
+          error.response?.data || error.message
+        );
+        setError(error.response?.data?.message || "Failed to fetch bookings");
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
 
     fetchBookings();
-  }, []); // Empty dependency array to run only once on component mount
+  }, []);
+
+  if (loading) return <p>Loading bookings...</p>;
+  if (error) return <p className="text-red-500">❌ {error}</p>;
 
   return (
     <div className="p-6">
