@@ -7,8 +7,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove token from localStorage
-    navigate("/login"); // Redirect to login page
-    window.location.reload(); // Ensure page refresh for proper logout
+    navigate("/login", { replace: true }); // Redirect to login page
   };
 
   return (
