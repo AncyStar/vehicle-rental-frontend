@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../services/api"; // Import API service
+import axios from "../services/api"; // Ensure API service is correctly configured
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -16,12 +16,20 @@ const Login = () => {
     setError(""); // Clear previous errors
 
     try {
-      const response = await axios.post("/auth/login", formData); // API route
+      const response = await axios.post("/auth/login", formData, {
+        headers: { "Content-Type": "application/json" }, // Ensure correct headers
+        withCredentials: true, // Required for authentication
+      });
+
       localStorage.setItem("token", response.data.token);
-      alert("Login successful!");
-      navigate("/"); //Redirect to home
-    } catch {
-      setError("Invalid email or password. Please try again.");
+      alert(" Login successful!");
+      navigate("/"); // Redirect to home
+    } catch (err) {
+      console.error("Login Error:", err.response?.data || err.message);
+      setError(
+        err.response?.data?.message ||
+          "Invalid email or password. Please try again."
+      );
     }
   };
 
