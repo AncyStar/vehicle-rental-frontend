@@ -19,7 +19,7 @@ const MyBookings = () => {
       }
 
       try {
-        const response = await API.get("/bookings/my"); // Uses the Axios instance
+        const response = await API.get("/bookings"); // Uses the Axios instance
         console.log("Bookings received:", response.data);
         setBookings(response.data);
       } catch (error) {
