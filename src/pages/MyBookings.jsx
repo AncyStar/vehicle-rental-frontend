@@ -8,9 +8,14 @@ const MyBookings = () => {
 
   useEffect(() => {
     const fetchBookings = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in localStorage");
+        return;
+      }
       try {
         const response = await API.get("/bookings/my"); // Uses the Axios instance
-        console.log(" Bookings received:", response.data);
+        console.log("Bookings received:", response.data);
         setBookings(response.data);
       } catch (error) {
         console.error(
