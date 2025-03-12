@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const MyBookings = () => {
@@ -8,7 +8,7 @@ const MyBookings = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       if (!token) {
-        console.error("No token found. User not authenticated.");
+        console.error("❌ No token found. User not authenticated.");
         return; // Prevent API call if no token exists
       }
 
@@ -16,19 +16,19 @@ const MyBookings = () => {
         const response = await axios.get(
           "https://vehicle-rental-backend-bksz.onrender.com/api/bookings/my", // ✅ Fixed API Route
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setBookings(response.data);
+
+        console.log("✅ Bookings received:", response.data); // Debug log
+        setBookings(response.data); // Store bookings in state
       } catch (error) {
         console.error("❌ Error fetching bookings:", error);
       }
     };
 
     fetchBookings();
-  }, [token]);
+  }, []); // Empty dependency array to run only once on component mount
 
   return (
     <div className="p-6">
