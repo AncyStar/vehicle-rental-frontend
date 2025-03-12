@@ -8,6 +8,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove token from localStorage
     navigate("/login"); // Redirect to login page
+    window.location.reload(); // Ensure page refresh for proper logout
   };
 
   return (
@@ -20,8 +21,8 @@ const Navbar = () => {
         <Link to="/vehicles" className="hover:underline">
           Vehicles
         </Link>
-        <Link to="/bookings" className="hover:underline">
-          Bookings
+        <Link to="/my-bookings" className="hover:underline">
+          My Bookings
         </Link>
         {!token ? (
           <>
@@ -33,7 +34,10 @@ const Navbar = () => {
             </Link>
           </>
         ) : (
-          <button onClick={handleLogout} className="hover:underline">
+          <button
+            onClick={handleLogout}
+            className="hover:underline cursor-pointer bg-transparent border-none text-white"
+          >
             Logout
           </button>
         )}

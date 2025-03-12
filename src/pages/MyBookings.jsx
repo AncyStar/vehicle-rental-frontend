@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const BookingDetails = () => {
+const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const token = localStorage.getItem("token"); // Get token from local storage
 
@@ -14,7 +14,7 @@ const BookingDetails = () => {
 
       try {
         const response = await axios.get(
-          "https://vehicle-rental-backend-bksz.onrender.com/api/bookings/my-bookings",
+          "https://vehicle-rental-backend-bksz.onrender.com/api/bookings/my", // ✅ Fixed API Route
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -23,12 +23,12 @@ const BookingDetails = () => {
         );
         setBookings(response.data);
       } catch (error) {
-        console.error("Error fetching bookings:", error);
+        console.error("❌ Error fetching bookings:", error);
       }
     };
 
     fetchBookings();
-  }, [token]); // No need to include `token` in dependencies
+  }, [token]);
 
   return (
     <div className="p-6">
@@ -64,4 +64,4 @@ const BookingDetails = () => {
   );
 };
 
-export default BookingDetails;
+export default MyBookings;
