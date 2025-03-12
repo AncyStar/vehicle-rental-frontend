@@ -16,7 +16,7 @@ const Login = () => {
     setError(""); // Clear previous errors
 
     try {
-      const response = await axios.post("/auth/login", formData); // ✅ Correct API route
+      const response = await axios.post("/auth/login", formData); // API route
       localStorage.setItem("token", response.data.token);
       alert("Login successful!");
       navigate("/"); //Redirect to home

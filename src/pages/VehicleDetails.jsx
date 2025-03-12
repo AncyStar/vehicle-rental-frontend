@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import API from "../services/api"; //Use API instead of axios
+import API from "../services/api"; //API instead of axios
 
 const VehicleDetails = () => {
   const { id } = useParams(); //  Use `id` to match route `/vehicles/:id`

@@ -24,8 +24,7 @@ const Vehicles = () => {
           vehicles.map((vehicle) => (
             <div key={vehicle._id} className="border p-4 rounded-lg shadow-lg">
               <img
-                src={vehicle.images?.[0] || "/default-car.jpg"} // ✅ Changed from imageUrls to images
-                alt={vehicle.model || "Unknown Model"}
+                src={vehicle.images?.[0] || "/default-car.jpg"}
                 className="w-full h-40 object-cover rounded"
               />
               <h3 className="text-xl font-semibold">
@@ -43,7 +42,7 @@ const Vehicles = () => {
             </div>
           ))
         ) : (
-          <p>No vehicles available.</p> // ✅ Handles empty state
+          <p>No vehicles available.</p>
         )}
       </div>
     </div>

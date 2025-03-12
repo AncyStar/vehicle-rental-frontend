@@ -30,7 +30,7 @@ const Booking = () => {
       return;
     }
 
-    const totalPrice = days * (vehicle?.pricePerDay || 0); // Ensure pricePerDay exists
+    const totalPrice = days * (vehicle?.pricePerDay || 0); // pricePerDay
 
     console.log("Booking Data:", {
       vehicleId: id,

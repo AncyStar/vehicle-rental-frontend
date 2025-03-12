@@ -1,4 +1,4 @@
-import API from "./api"; // Import the configured Axios instance
+import API from "./api";
 
 // Fetch a booking by ID
 export const fetchBooking = async (bookingId) => {
