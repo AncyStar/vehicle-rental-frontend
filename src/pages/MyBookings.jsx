@@ -1,30 +1,42 @@
 import { useEffect, useState } from "react";
-import API from "../services/api"; // Import Axios instance
+import API from "../services/api"; // Axios instance with auto-token
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); //Added loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBookings = async () => {
       const token = localStorage.getItem("token");
+      console.log("Token being sent:", token);
+
       if (!token) {
         console.error("No token found in localStorage");
+        setError("Authentication error. Please log in again.");
+        setLoading(false);
         return;
       }
+
       try {
         const response = await API.get("/bookings/my"); // Uses the Axios instance
         console.log("Bookings received:", response.data);
         setBookings(response.data);
       } catch (error) {
         console.error(
-          "Error fetching bookings:",
+          " Error fetching bookings:",
           error.response?.data || error.message
         );
-        setError(error.response?.data?.message || "Failed to fetch bookings");
+
+        if (error.response?.status === 401) {
+          setError("Session expired. Please log in again.");
+          localStorage.removeItem("token");
+          setTimeout(() => (window.location.href = "/login"), 2000);
+        } else {
+          setError(error.response?.data?.message || "Failed to fetch bookings");
+        }
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
 
