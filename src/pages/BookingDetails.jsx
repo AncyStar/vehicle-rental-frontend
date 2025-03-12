@@ -28,7 +28,7 @@ const BookingDetails = () => {
     };
 
     fetchBookings();
-  }, []); // ✅ No need to include `token` in dependencies
+  }, [token]); // No need to include `token` in dependencies
 
   return (
     <div className="p-6">
